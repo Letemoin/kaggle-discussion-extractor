@@ -16,7 +16,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="kaggle-discussion-extractor",
-    version="1.0.0",
+    version="1.0.1",
     author="Kaggle Discussion Extractor Team",
     author_email="contact@kaggle-extractor.com",
     description="A professional-grade Python tool for extracting and analyzing discussions from Kaggle competitions",

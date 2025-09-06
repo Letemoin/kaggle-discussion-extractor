@@ -21,7 +21,10 @@
       "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" auth status)",
       "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" auth login)",
       "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" repo create kaggle-discussion-extractor --public --description \"Professional-grade Python tool for extracting Kaggle competition discussions with hierarchical reply structure\" --source . --push)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(git push:*)",
+      "Bash(twine upload:*)",
+      "Bash(pip uninstall:*)"
     ],
     "deny": [],
     "ask": []

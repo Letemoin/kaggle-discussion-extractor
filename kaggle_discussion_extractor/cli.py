@@ -58,7 +58,7 @@ Examples:
     parser.add_argument(
         '--version', '-v',
         action='version',
-        version='kaggle-discussion-extractor 1.0.0'
+        version='kaggle-discussion-extractor 1.0.1'
     )
     
     return parser
@@ -131,6 +131,14 @@ async def main():
 
 def cli_main():
     """Entry point for console script"""
+    # Handle version first (non-async)
+    parser = create_parser()
+    
+    # Pre-check for version to avoid async issues
+    if len(sys.argv) > 1 and sys.argv[1] in ['--version', '-v']:
+        print('kaggle-discussion-extractor 1.0.1')
+        return
+    
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
