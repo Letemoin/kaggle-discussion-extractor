@@ -13,7 +13,15 @@
       "Bash(if exist NEURIPS_2025_PERFECT_EXTRACTION rmdir /s /q NEURIPS_2025_PERFECT_EXTRACTION)",
       "Bash(kaggle-discussion-extractor:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(gh:*)",
+      "Bash(where gh)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" --version)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" auth status)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" auth login)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" repo create kaggle-discussion-extractor --public --description \"Professional-grade Python tool for extracting Kaggle competition discussions with hierarchical reply structure\" --source . --push)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []
