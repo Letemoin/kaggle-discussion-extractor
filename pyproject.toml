@@ -1,0 +1,130 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kaggle-discussion-extractor"
+version = "1.1.1"
+description = "A professional-grade tool for extracting and analyzing discussions from Kaggle competitions"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Kaggle Discussion Extractor Contributors"},
+]
+maintainers = [
+    {name = "Kaggle Discussion Extractor Contributors"},
+]
+keywords = [
+    "kaggle",
+    "discussion",
+    "extractor",
+    "web-scraping",
+    "data-extraction",
+    "machine-learning",
+    "competition",
+    "playwright",
+    "async",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+
+dependencies = [
+    "playwright>=1.40.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.3",
+    "pytest-asyncio>=0.21.1",
+    "black>=23.11.0",
+    "flake8>=6.1.0",
+    "mypy>=1.7.0",
+    "coverage>=7.3.2",
+    "pre-commit>=3.5.0",
+]
+enhanced = [
+    "beautifulsoup4>=4.12.2",
+    "lxml>=4.9.3",
+    "tqdm>=4.66.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/Letemoin/kaggle-discussion-extractor"
+Documentation = "https://github.com/Letemoin/kaggle-discussion-extractor#readme"
+Repository = "https://github.com/Letemoin/kaggle-discussion-extractor"
+"Bug Tracker" = "https://github.com/Letemoin/kaggle-discussion-extractor/issues"
+
+[project.scripts]
+kaggle-discussion-extractor = "kaggle_discussion_extractor.cli:cli_main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["kaggle_discussion_extractor*"]
+exclude = ["tests*", "examples*", "docs*"]
+
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_any_unimported = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+check_untyped_defs = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["kaggle_discussion_extractor"]
+omit = ["*/tests/*", "*/examples/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if __name__ == .__main__.:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
