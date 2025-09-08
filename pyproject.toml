@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kaggle-discussion-extractor"
-version = "1.1.1"
+version = "1.2.0"
 description = "A professional-grade tool for extracting and analyzing discussions from Kaggle competitions"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -45,6 +45,8 @@ classifiers = [
 
 dependencies = [
     "playwright>=1.40.0",
+    "nbformat>=5.0.0",
+    "nbconvert>=6.0.0",
 ]
 
 [project.optional-dependencies]
