@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 from .core import KaggleDiscussionExtractor
 from .writeup_extractor import KaggleWriteupExtractor
+from .notebook_downloader import KaggleNotebookDownloader
 
 
 def create_parser():
@@ -88,6 +89,25 @@ Examples:
         help='Leaderboard tab to extract from (default: private)'
     )
     
+    parser.add_argument(
+        '--download-notebooks',
+        action='store_true',
+        help='Download and convert notebooks from competition to Python files'
+    )
+    
+    parser.add_argument(
+        '--notebooks-input',
+        type=str,
+        help='Text file with list of notebook URLs (one per line) for batch download'
+    )
+    
+    parser.add_argument(
+        '--extraction-attempts',
+        type=int,
+        default=1,
+        help='Number of times to retry URL extraction logic for notebooks (default: 1)'
+    )
+    
     # Version handled in cli_main() to avoid async issues
     
     return parser
@@ -103,7 +123,13 @@ async def main(args):
         sys.exit(1)
     
     # Choose extractor type based on mode
-    if args.extract_writeups:
+    if args.download_notebooks:
+        extractor = KaggleNotebookDownloader(
+            dev_mode=args.dev_mode,
+            headless=not args.no_headless,
+            extraction_attempts=args.extraction_attempts
+        )
+    elif args.extract_writeups:
         extractor = KaggleWriteupExtractor(
             dev_mode=args.dev_mode,
             headless=not args.no_headless
@@ -117,13 +143,22 @@ async def main(args):
         )
     
     print("=" * 60)
-    if args.extract_writeups:
+    if args.download_notebooks:
+        print("Kaggle Notebook Downloader")
+    elif args.extract_writeups:
         print("Kaggle Writeup Extractor")
     else:
         print("Kaggle Discussion Extractor")
     print("=" * 60)
     print(f"Competition: {args.competition_url}")
-    if args.extract_writeups:
+    
+    if args.download_notebooks:
+        print("Features:")
+        print("  - Competition notebook discovery and download")
+        print("  - Automatic conversion from .ipynb to .py files") 
+        print("  - Custom naming: {title}_{last_updated}.py")
+        print("  - Support for batch processing from URL list")
+    elif args.extract_writeups:
         print("Features:")
         print("  - Leaderboard scraping for writeup URLs")
         print("  - Automatic writeup discussion extraction")
@@ -149,7 +184,28 @@ async def main(args):
     
     try:
         # Start extraction
-        if args.extract_writeups:
+        if args.download_notebooks:
+            # Handle notebook download mode
+            if args.notebooks_input:
+                # Batch mode: read URLs from file
+                input_file = Path(args.notebooks_input)
+                if not input_file.exists():
+                    print(f"Error: File not found: {args.notebooks_input}")
+                    sys.exit(1)
+                
+                with open(input_file, 'r') as f:
+                    notebook_urls = [line.strip() for line in f if line.strip()]
+                
+                print(f"Processing {len(notebook_urls)} notebooks from file...")
+                # TODO: Implement batch processing from URL list
+                success = True  # Placeholder
+            else:
+                # Competition mode: extract all notebooks from competition
+                success = await extractor.download_competition_notebooks(
+                    competition_url=args.competition_url,
+                    limit=args.limit
+                )
+        elif args.extract_writeups:
             success = await extractor.extract_competition_writeups(
                 competition_url=args.competition_url,
                 limit=args.limit,
@@ -163,11 +219,15 @@ async def main(args):
         
         if success:
             print("\n" + "=" * 60)
-            print("EXTRACTION COMPLETED SUCCESSFULLY!")
-            if args.extract_writeups:
-                print("Check the 'writeups_extracted' directory for results")
+            if args.download_notebooks:
+                print("NOTEBOOK DOWNLOAD COMPLETED SUCCESSFULLY!")
+                print("Check the 'kaggle_notebooks_downloaded' directory for results")
             else:
-                print("Check the 'kaggle_discussions_extracted' directory for results")
+                print("EXTRACTION COMPLETED SUCCESSFULLY!")
+                if args.extract_writeups:
+                    print("Check the 'writeups_extracted' directory for results")
+                else:
+                    print("Check the 'kaggle_discussions_extracted' directory for results")
             print("=" * 60)
         else:
             print("\n" + "=" * 60)

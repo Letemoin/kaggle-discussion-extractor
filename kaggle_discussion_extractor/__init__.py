@@ -8,6 +8,7 @@ Features hierarchical reply extraction, pagination support, and clean output for
 from .core import KaggleDiscussionExtractor, Discussion, Reply, Author
 from .leaderboard import KaggleLeaderboardScraper, WriteupEntry
 from .writeup_extractor import KaggleWriteupExtractor
+from .notebook_downloader import KaggleNotebookDownloader, NotebookInfo
 from .cli import cli_main
 
 __version__ = "1.1.0"
@@ -18,9 +19,11 @@ __all__ = [
     "KaggleDiscussionExtractor",
     "KaggleLeaderboardScraper",
     "KaggleWriteupExtractor",
+    "KaggleNotebookDownloader",
     "Discussion", 
     "Reply",
     "Author",
     "WriteupEntry",
+    "NotebookInfo",
     "cli_main"
 ]
