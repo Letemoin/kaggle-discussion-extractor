@@ -4,9 +4,17 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Playwright](https://img.shields.io/badge/Playwright-45ba4b?style=flat&logo=playwright&logoColor=white)](https://playwright.dev/python/)
 
-A professional-grade Python tool for extracting and analyzing discussions and solution writeups from Kaggle competitions. Features hierarchical reply extraction, automatic writeup extraction from leaderboards, and clean markdown output with rich metadata.
+A professional-grade Python tool for extracting and analyzing discussions, solution writeups, and notebooks from Kaggle competitions. Features hierarchical reply extraction, automatic writeup extraction from leaderboards, competition notebook downloading with conversion to Python files, and clean markdown output with rich metadata.
 
 ## 🚀 Key Features
+
+### 📓 Notebook Download & Conversion
+- **Competition Notebook Discovery**: Automatically finds all public notebooks from competitions
+- **Kaggle API Integration**: Uses Kaggle CLI API for reliable notebook listing (primary method)
+- **Web Scraping Fallback**: Advanced lazy loading with configurable retry attempts
+- **Automatic Conversion**: Converts `.ipynb` files to clean Python `.py` files
+- **Smart Naming**: Files saved as `{NotebookTitle}_{YYMMDD}.py` with metadata headers
+- **Batch Processing**: Download and convert multiple notebooks efficiently
 
 ### Competition Writeup Extraction
 - **Leaderboard Scraping**: Automatically extracts writeup URLs from competition leaderboards
@@ -30,10 +38,12 @@ A professional-grade Python tool for extracting and analyzing discussions and so
 
 ### Advanced Capabilities
 - **Pagination Support**: Automatically handles multi-page discussion lists
-- **Batch Processing**: Extract all discussions from a competition at once
+- **Lazy Loading Handling**: Advanced infinite scroll with configurable retry attempts
+- **Batch Processing**: Extract all discussions, writeups, or notebooks from a competition at once
 - **Rate Limiting**: Built-in delays to respect server resources
 - **Error Recovery**: Robust error handling with detailed logging
-- **Multiple Output Formats**: Clean Markdown export with proper formatting
+- **Multiple Output Formats**: Clean Markdown export and Python file conversion
+- **Hybrid Extraction**: Kaggle API integration with web scraping fallback
 
 ## 📦 Installation
 
@@ -78,6 +88,12 @@ kaggle-discussion-extractor https://www.kaggle.com/competitions/cmi-detect-behav
 
 # Extract from public leaderboard with development mode
 kaggle-discussion-extractor https://www.kaggle.com/competitions/cmi-detect-behavior --extract-writeups --leaderboard-tab public --dev-mode
+
+# Download competition notebooks and convert to Python files
+kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --download-notebooks
+
+# Download notebooks with enhanced extraction (2 retry attempts)
+kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --download-notebooks --extraction-attempts 2 --limit 20
 ```
 
 ### Python API Usage
@@ -131,21 +147,78 @@ async def extract_writeups():
 asyncio.run(extract_writeups())
 ```
 
+#### Download Notebooks
+```python
+import asyncio
+from kaggle_discussion_extractor import KaggleNotebookDownloader
+
+async def download_notebooks():
+    # Initialize notebook downloader
+    downloader = KaggleNotebookDownloader(
+        dev_mode=True,
+        extraction_attempts=2  # Enhanced extraction with 2 retry attempts
+    )
+    
+    # Extract notebook list from competition
+    notebooks = await downloader.extract_notebook_list(
+        competition_url="https://www.kaggle.com/competitions/neurips-2025",
+        limit=20  # Download top 20 notebooks
+    )
+    
+    print(f"Found {len(notebooks)} notebooks:")
+    for notebook in notebooks:
+        print(f"  - {notebook.title} by {notebook.author}")
+    
+    # Download and convert notebooks to Python files
+    output_dir = Path("competition_notebooks")
+    success_count = 0
+    
+    for notebook in notebooks:
+        success = await downloader.extract_notebook_comments(notebook, output_dir)
+        if success:
+            success_count += 1
+    
+    print(f"Successfully downloaded {success_count}/{len(notebooks)} notebooks")
+
+# Run the download
+asyncio.run(download_notebooks())
+```
+
 ## 📋 CLI Options
 
 | Option | Description | Default |
 |--------|-------------|---------|
 | `competition_url` | URL of the Kaggle competition (required) | - |
-| `--limit, -l` | Number of discussions/writeups to extract | All |
+| `--limit, -l` | Number of discussions/writeups/notebooks to extract | All |
 | `--dev-mode, -d` | Enable detailed logging | False |
 | `--no-headless` | Run browser in visible mode | False (headless) |
 | `--date-format` | Include YYMMDD date in filename | False |
 | `--date-position` | Position of date (prefix/suffix) | suffix |
 | `--extract-writeups` | Extract writeups from leaderboard | False |
 | `--leaderboard-tab` | Leaderboard tab (private/public) | private |
+| `--download-notebooks` | Download and convert notebooks to Python | False |
+| `--extraction-attempts` | Number of retry attempts for notebook extraction | 1 |
+| `--notebooks-input` | Text file with notebook URLs for batch download | - |
 | `--version, -v` | Show version information | - |
 
 ## 📁 Output Structure
+
+### 📓 Notebook Downloads
+The notebook downloader creates a custom output directory (default: current directory) with:
+
+```
+competition_notebooks/
+├── Neurips Simple Baseline With Lightgbm_250908.py
+├── Multi Seed Ensemble Of Gbdts And A Neural Network_250908.py
+├── Lb 0 067 2Gpu Chemberta Train_250908.py
+├── End To End Best Practice Solution_250908.py
+└── ...
+```
+
+Each Python file includes:
+- **Metadata Header**: Original title, author, source URL, download timestamp
+- **Clean Python Code**: Converted from Jupyter notebook cells
+- **Preserved Structure**: In[ ] comments maintain original cell organization
 
 ### Writeup Extraction
 The writeup extractor creates a `writeups_extracted` directory with:
@@ -169,7 +242,38 @@ kaggle_discussions_extracted/
 └── ...
 ```
 
-### Sample Output Format
+### Sample Notebook Output Format
+
+```python
+#!/usr/bin/env python3
+"""
+Neurips Simple Baseline With Lightgbm
+Author: jade290395
+Last Updated: 250908
+Source: https://www.kaggle.com/code/jade290395/neurips-simple-baseline-with-lightgbm
+Downloaded: 2025-09-08 22:04:47
+"""
+
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[ ]:
+
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import ExtraTreesRegressor
+from lightgbm import LGBMRegressor
+
+# In[ ]:
+
+# Load data and build features
+tg = pd.read_csv('/kaggle/input/modred-dataset/desc_tg.csv')
+tc = pd.read_csv('/kaggle/input/modred-dataset/desc_tc.csv')
+
+# Continue with notebook code...
+```
+
+### Sample Discussion Output Format
 
 ```markdown
 # Discussion Title
@@ -273,6 +377,43 @@ async def main():
 asyncio.run(main())
 ```
 
+### Notebook Download Example
+
+```python
+from kaggle_discussion_extractor import KaggleNotebookDownloader
+import asyncio
+from pathlib import Path
+
+async def download_competition_notebooks():
+    # Initialize with enhanced extraction settings
+    downloader = KaggleNotebookDownloader(
+        dev_mode=True,           # Enable detailed logging
+        headless=True,           # Run in background
+        extraction_attempts=2    # Try extraction twice for better results
+    )
+    
+    # Download notebooks from competition
+    notebooks = await downloader.extract_notebook_list(
+        "https://www.kaggle.com/competitions/neurips-2025",
+        limit=15  # Download top 15 notebooks
+    )
+    
+    # Create output directory
+    output_dir = Path("neurips_notebooks")
+    output_dir.mkdir(exist_ok=True)
+    
+    # Download and convert each notebook
+    for i, notebook in enumerate(notebooks, 1):
+        print(f"Processing {i}/{len(notebooks)}: {notebook.title}")
+        success = await downloader.extract_notebook_comments(notebook, output_dir)
+        if success:
+            print(f"✅ Downloaded: {notebook.filename}")
+        else:
+            print(f"❌ Failed: {notebook.title}")
+
+asyncio.run(download_competition_notebooks())
+```
+
 ### Advanced Example with Logging
 
 ```python
@@ -328,9 +469,11 @@ pytest tests/
 
 ```
 kaggle_discussion_extractor/
-├── __init__.py          # Package initialization
-├── core.py             # Main extraction logic
-└── cli.py              # Command-line interface
+├── __init__.py              # Package initialization and exports
+├── core.py                 # Discussion extraction logic
+├── writeup_extractor.py    # Leaderboard writeup extraction
+├── notebook_downloader.py  # Competition notebook downloading
+└── cli.py                  # Command-line interface
 ```
 
 ## 🤝 Contributing
@@ -341,6 +484,8 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 ## 🙏 Acknowledgments
 
 - Built with [Playwright](https://playwright.dev/) for reliable browser automation
+- Uses [nbformat](https://nbformat.readthedocs.io/) and [nbconvert](https://nbconvert.readthedocs.io/) for Jupyter notebook processing
+- Integrates with [Kaggle CLI](https://github.com/Kaggle/kaggle-api) for robust notebook discovery
 - Inspired by the need for better Kaggle competition analysis tools
 - Thanks to the open-source community for continuous support
 
