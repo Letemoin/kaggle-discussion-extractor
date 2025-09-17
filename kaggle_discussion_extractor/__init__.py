@@ -6,6 +6,7 @@ Features hierarchical reply extraction, pagination support, and clean output for
 """
 
 from .core import KaggleDiscussionExtractor, Discussion, Reply, Author
+from .notebook_downloader import KaggleNotebookDownloader, NotebookInfo
 from .cli import main as cli_main
 
 __version__ = "1.0.0"

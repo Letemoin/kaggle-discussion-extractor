@@ -13,11 +13,13 @@ with open("README.md", "r", encoding="utf-8") as fh:
 # Define requirements directly
 requirements = [
     "playwright>=1.40.0",
+    "nbformat>=5.9.0",
+    "nbconvert>=7.8.0",
 ]
 
 setup(
     name="kaggle-discussion-extractor",
-    version="1.0.13",
+    version="1.0.15",
     author="Kaggle Discussion Extractor Contributors",
     author_email="contact@kaggle-extractor.com",
     description="Professional tool for extracting Kaggle competition discussions and writeups with leaderboard integration",

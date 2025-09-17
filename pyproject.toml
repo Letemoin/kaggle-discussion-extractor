@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kaggle-discussion-extractor"
-version = "1.0.13"
+version = "1.0.15"
 description = "Professional tool for extracting Kaggle competition discussions and writeups with leaderboard integration"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -45,6 +45,8 @@ classifiers = [
 
 dependencies = [
     "playwright>=1.40.0",
+    "nbformat>=5.9.0",
+    "nbconvert>=7.8.0",
 ]
 
 [project.optional-dependencies]
@@ -98,7 +100,7 @@ extend-exclude = '''
 '''
 
 [tool.mypy]
-python_version = "1.0.13"
+python_version = "1.0.15"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -110,7 +112,7 @@ warn_no_return = true
 check_untyped_defs = true
 
 [tool.pytest.ini_options]
-minversion = "1.0.13"
+minversion = "1.0.15"
 testpaths = ["tests"]
 python_files = "test_*.py"
 python_classes = "Test*"

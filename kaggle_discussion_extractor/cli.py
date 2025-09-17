@@ -8,6 +8,7 @@ import asyncio
 import sys
 from pathlib import Path
 from .core import KaggleDiscussionExtractor
+from .notebook_downloader import KaggleNotebookDownloader
 
 
 def create_parser():
@@ -53,6 +54,12 @@ Examples:
         '--no-headless',
         action='store_true',
         help='Run browser in visible mode (not headless)'
+    )
+
+    parser.add_argument(
+        '--notebooks', '-n',
+        action='store_true',
+        help='Download and convert competition notebooks to Python files'
     )
     
     parser.add_argument(
@@ -100,24 +107,51 @@ async def main():
     print()
 
     try:
-        # Start extraction
-        success = await extractor.extract_competition_discussions(
-            competition_url=args.competition_url,
-            limit=args.limit
-        )
+        success = False
 
-        if success:
-            print("\n" + "=" * 60)
-            print("EXTRACTION COMPLETED SUCCESSFULLY!")
-            print("Check the 'kaggle_discussions_extracted' directory for results")
-            print("=" * 60)
-            return True
+        # Check what to extract
+        if args.notebooks:
+            # Extract notebooks
+            print("Starting notebook extraction...")
+            notebook_downloader = KaggleNotebookDownloader(
+                dev_mode=args.dev_mode,
+                headless=not args.no_headless
+            )
+
+            success = await notebook_downloader.download_competition_notebooks(
+                competition_url=args.competition_url,
+                limit=args.limit
+            )
+
+            if success:
+                print("\n" + "=" * 60)
+                print("NOTEBOOK EXTRACTION COMPLETED SUCCESSFULLY!")
+                print("Check the 'kaggle_notebooks_downloaded' directory for results")
+                print("=" * 60)
+            else:
+                print("\n" + "=" * 60)
+                print("NOTEBOOK EXTRACTION FAILED!")
+                print("Check the error messages above for details")
+                print("=" * 60)
         else:
-            print("\n" + "=" * 60)
-            print("EXTRACTION FAILED!")
-            print("Check the error messages above for details")
-            print("=" * 60)
-            return False
+            # Extract discussions (default)
+            success = await extractor.extract_competition_discussions(
+                competition_url=args.competition_url,
+                limit=args.limit
+            )
+
+            if success:
+                print("\n" + "=" * 60)
+                print("DISCUSSION EXTRACTION COMPLETED SUCCESSFULLY!")
+                print("Check the 'kaggle_discussions_extracted' directory for results")
+                print("=" * 60)
+            else:
+                print("\n" + "=" * 60)
+                print("DISCUSSION EXTRACTION FAILED!")
+                print("Check the error messages above for details")
+                print("=" * 60)
+
+        return success
 
     except KeyboardInterrupt:
         print("\nExtraction cancelled by user")

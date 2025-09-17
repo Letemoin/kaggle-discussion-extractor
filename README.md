@@ -10,13 +10,16 @@ A professional Python tool for extracting Kaggle competition content with proper
 
 ## 🎯 Main Features
 
-The package provides **2 core extraction capabilities**:
+The package provides **3 core extraction capabilities**:
 
 ### 1. 💬 Discussion Extraction
 Extract complete competition discussions with hierarchical reply structure, author metadata, rankings, and full content preservation.
 
 ### 2. 🏆 Writeup Extraction
 Extract top-performing writeups directly from competition leaderboards with team information, rankings, and complete solution details in multiple formats (Markdown, HTML, JSON).
+
+### 3. 📓 Code Notebook Extraction
+Extract competition code notebooks, download them via Kaggle API, and convert them to Python files using nbconvert. Includes metadata preservation and automatic organization.
 
 ### Key Capabilities
 - **Complete Content Preservation**: No trimming or content loss
@@ -44,6 +47,9 @@ kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025
 # Extract top 5 discussions only
 kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --limit 5
 
+# Extract and convert notebooks to Python files
+kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --notebooks --limit 10
+
 # Enable detailed logging
 kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --dev-mode
 ```
@@ -52,7 +58,7 @@ kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --d
 
 ```python
 import asyncio
-from kaggle_discussion_extractor import KaggleDiscussionExtractor
+from kaggle_discussion_extractor import KaggleDiscussionExtractor, KaggleNotebookDownloader
 
 async def main():
     extractor = KaggleDiscussionExtractor()
@@ -77,6 +83,17 @@ async def main():
     if success:
         print("✅ Writeups extracted to kaggle_writeups_extracted/")
 
+    # 3. Extract and Convert Competition Notebooks
+    print("Extracting notebooks...")
+    notebook_downloader = KaggleNotebookDownloader()
+    success = await notebook_downloader.download_competition_notebooks(
+        competition_url="https://www.kaggle.com/competitions/neurips-2025",
+        limit=10  # Extract top 10 notebooks
+    )
+
+    if success:
+        print("✅ Notebooks extracted to kaggle_notebooks_downloaded/")
+
 # Run the extraction
 asyncio.run(main())
 ```
@@ -86,7 +103,8 @@ asyncio.run(main())
 | Command | Description |
 |---------|-------------|
 | `kaggle-discussion-extractor <url>` | Extract all discussions |
-| `--limit N` | Extract only N discussions |
+| `--limit N` | Extract only N discussions/notebooks |
+| `--notebooks` | Extract and convert notebooks to Python |
 | `--dev-mode` | Enable detailed logging |
 | `--no-headless` | Show browser window |
 
@@ -103,6 +121,14 @@ kaggle_writeups_extracted/
 ├── Rank_01_Team_Name.md        # Markdown (readable)
 ├── Rank_01_Team_Name.html      # Complete HTML
 ├── Rank_01_Team_Name.json      # Structured data
+└── ...
+
+kaggle_notebooks_downloaded/
+├── competition-name/
+│   ├── Notebook_Title_1_240918.py    # Converted Python
+│   ├── Notebook_Title_1_240918.ipynb # Original notebook
+│   ├── Notebook_Title_2_240918.py    # Converted Python
+│   └── Notebook_Title_2_240918.ipynb # Original notebook
 └── ...
 ```
 
