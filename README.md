@@ -5,6 +5,8 @@
 
 A Python tool for extracting Kaggle competition discussions and writeups with proper hierarchical structure and complete content preservation.
 
+> ℹ️ **Note**: Starting September 17, 2025, Claude is contributing to fix and enhance this repository, focusing on improved leaderboard extraction, hierarchical comment structure, and complete content preservation.
+
 ## 🎯 Features
 
 - **Complete Discussion Extraction**: Full content from competition discussions and writeups
@@ -45,15 +47,21 @@ async def extract_discussions():
     extractor = KaggleDiscussionExtractor()
 
     # Extract all discussions
-    await extractor.extract_competition_discussions(
-        "https://www.kaggle.com/competitions/neurips-2025"
+    success = await extractor.extract_competition_discussions(
+        competition_url="https://www.kaggle.com/competitions/neurips-2025"
     )
 
+    if success:
+        print("Discussions extracted successfully!")
+
     # Extract writeups from leaderboard
-    await extractor.extract_competition_writeups(
-        "https://www.kaggle.com/competitions/neurips-2025",
+    success = await extractor.extract_competition_writeups(
+        competition_url="https://www.kaggle.com/competitions/neurips-2025",
         limit=5
     )
+
+    if success:
+        print("Writeups extracted successfully!")
 
 asyncio.run(extract_discussions())
 ```
@@ -142,13 +150,24 @@ extractor = KaggleDiscussionExtractor(headless=False)
 ### Extract Specific Content
 ```python
 # Extract discussions only
-await extractor.extract_competition_discussions(url, limit=10)
+success = await extractor.extract_competition_discussions(
+    competition_url="https://www.kaggle.com/competitions/your-competition",
+    limit=10
+)
 
 # Extract writeups only
-await extractor.extract_competition_writeups(url, limit=5)
+success = await extractor.extract_competition_writeups(
+    competition_url="https://www.kaggle.com/competitions/your-competition",
+    limit=5
+)
 
-# Extract single discussion
-discussion = await extractor.extract_single_discussion(page, discussion_url)
+# Extract single discussion (requires page object)
+from playwright.async_api import async_playwright
+async with async_playwright() as p:
+    browser = await p.chromium.launch()
+    page = await browser.new_page()
+    discussion = await extractor.extract_single_discussion(page, discussion_url)
+    await browser.close()
 ```
 
 ## 🔧 Development
@@ -176,11 +195,13 @@ kaggle_discussion_extractor/
 
 ## 🎯 Key Features
 
-- **Leaderboard-Based Extraction**: Automatically finds top writeups from competition leaderboards
-- **Complete Content Preservation**: No trimming or content loss
-- **Team Detection**: Properly handles multi-member team writeups
-- **Hierarchical Comments**: Perfect reply nesting with correct numbering
+- **Leaderboard-Based Extraction**: Automatically finds top writeups from competition leaderboards with team information
+- **Complete Content Preservation**: No trimming or content loss - full solution details captured
+- **Team Detection**: Properly handles multi-member team writeups with individual member information
+- **Hierarchical Comments**: Perfect reply nesting with correct numbering (1, 1.1, 1.1.1, etc.)
 - **Multiple Output Formats**: MD for reading, HTML for viewing, JSON for processing
+- **Rich Metadata**: Author rankings, badges, timestamps, upvotes, team composition, scores
+- **Advanced Parsing**: Handles complex leaderboard structures and discussion pagination
 
 ## 📄 License
 
