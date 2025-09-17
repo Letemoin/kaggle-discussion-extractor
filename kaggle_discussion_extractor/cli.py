@@ -58,7 +58,7 @@ Examples:
     parser.add_argument(
         '--version', '-v',
         action='version',
-        version='kaggle-discussion-extractor 1.0.1'
+        version='kaggle-discussion-extractor 1.0.11'
     )
     
     return parser
@@ -137,14 +137,13 @@ def cli_main():
 
     # Pre-check for version to avoid async issues
     if len(sys.argv) > 1 and sys.argv[1] in ['--version', '-v']:
-        print('kaggle-discussion-extractor 1.0.1')
+        print('kaggle-discussion-extractor 1.0.11')
         return
 
     try:
         # Use asyncio.run() with proper exception handling
         result = asyncio.run(main())
-        if result is not None:
-            print(result)
+        sys.exit(0 if result else 1)
     except KeyboardInterrupt:
         print("\nExtraction cancelled by user")
         sys.exit(0)

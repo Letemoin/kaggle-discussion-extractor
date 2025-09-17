@@ -28,7 +28,8 @@
       "Bash(playwright install:*)",
       "Bash(if exist kaggle_discussions_extracted rmdir /s /q kaggle_discussions_extracted)",
       "Bash(tree:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []
