@@ -10,23 +10,25 @@ from setuptools import setup, find_packages
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-# Read requirements
-with open("requirements.txt", "r", encoding="utf-8") as fh:
-    requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
+# Define requirements directly
+requirements = [
+    "playwright>=1.40.0",
+]
 
 setup(
     name="kaggle-discussion-extractor",
-    version="1.0.1",
-    author="Kaggle Discussion Extractor Team",
+    version="1.0.7",
+    author="Kaggle Discussion Extractor Contributors",
     author_email="contact@kaggle-extractor.com",
-    description="A professional-grade Python tool for extracting and analyzing discussions from Kaggle competitions",
+    description="Professional tool for extracting Kaggle competition discussions and writeups with leaderboard integration",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/kaggle-discussion-extractor",
+    url="https://github.com/Letemoin/kaggle-discussion-extractor",
     project_urls={
-        "Bug Tracker": "https://github.com/yourusername/kaggle-discussion-extractor/issues",
-        "Documentation": "https://github.com/yourusername/kaggle-discussion-extractor#readme",
-        "Source Code": "https://github.com/yourusername/kaggle-discussion-extractor",
+        "Bug Tracker": "https://github.com/Letemoin/kaggle-discussion-extractor/issues",
+        "Documentation": "https://github.com/Letemoin/kaggle-discussion-extractor#readme",
+        "Source Code": "https://github.com/Letemoin/kaggle-discussion-extractor",
+        "Changelog": "https://github.com/Letemoin/kaggle-discussion-extractor/blob/master/CHANGELOG.md",
     },
     packages=find_packages(),
     classifiers=[

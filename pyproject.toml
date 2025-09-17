@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kaggle-discussion-extractor"
-version = "1.0.1"
-description = "A professional-grade tool for extracting and analyzing discussions from Kaggle competitions"
+version = "1.0.7"
+description = "Professional tool for extracting Kaggle competition discussions and writeups with leaderboard integration"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
@@ -64,10 +64,11 @@ enhanced = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/kaggle-discussion-extractor"
-Documentation = "https://github.com/yourusername/kaggle-discussion-extractor#readme"
-Repository = "https://github.com/yourusername/kaggle-discussion-extractor"
-"Bug Tracker" = "https://github.com/yourusername/kaggle-discussion-extractor/issues"
+Homepage = "https://github.com/Letemoin/kaggle-discussion-extractor"
+Documentation = "https://github.com/Letemoin/kaggle-discussion-extractor#readme"
+Repository = "https://github.com/Letemoin/kaggle-discussion-extractor"
+"Bug Tracker" = "https://github.com/Letemoin/kaggle-discussion-extractor/issues"
+Changelog = "https://github.com/Letemoin/kaggle-discussion-extractor/blob/master/CHANGELOG.md"
 
 [project.scripts]
 kaggle-discussion-extractor = "kaggle_discussion_extractor.cli:main"
@@ -97,7 +98,7 @@ extend-exclude = '''
 '''
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "1.0.7"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -109,7 +110,7 @@ warn_no_return = true
 check_untyped_defs = true
 
 [tool.pytest.ini_options]
-minversion = "7.0"
+minversion = "1.0.7"
 testpaths = ["tests"]
 python_files = "test_*.py"
 python_classes = "Test*"

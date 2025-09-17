@@ -24,7 +24,11 @@
       "Bash(git rm:*)",
       "Bash(git push:*)",
       "Bash(twine upload:*)",
-      "Bash(pip uninstall:*)"
+      "Bash(pip uninstall:*)",
+      "Bash(playwright install:*)",
+      "Bash(if exist kaggle_discussions_extracted rmdir /s /q kaggle_discussions_extracted)",
+      "Bash(tree:*)",
+      "Bash(git pull:*)"
     ],
     "deny": [],
     "ask": []
