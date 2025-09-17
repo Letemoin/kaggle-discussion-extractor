@@ -247,6 +247,10 @@ class KaggleNotebookDownloader:
                 if not href or '/code/' not in href or '?scriptVersionId' in href:
                     continue
 
+                # Skip comment links completely
+                if href.endswith('/comments'):
+                    continue
+
                 # Make absolute URL
                 notebook_url = urljoin('https://www.kaggle.com', href)
 
@@ -293,20 +297,23 @@ class KaggleNotebookDownloader:
     async def _extract_notebook_title(self, element) -> str:
         """Extract notebook title from element"""
         try:
-            # Try to get title from URL
+            # Try to get text content first (more descriptive)
+            text = await element.text_content()
+            if text and text.strip() and len(text.strip()) > 3:
+                clean_text = text.strip()
+                # Filter out generic terms
+                if not any(word in clean_text.lower() for word in ['comments', 'vote', 'ago']):
+                    return clean_text[:50]
+
+            # Fallback: get title from URL
             href = await element.get_attribute('href')
-            if href:
+            if href and not href.endswith('/comments'):
                 parts = href.split('/')
                 if len(parts) >= 2:
                     notebook_name = parts[-1]
                     title_from_url = notebook_name.replace('-', ' ').title()
                     if len(title_from_url) > 3:
                         return title_from_url[:50]
-
-            # Try to get text content
-            text = await element.text_content()
-            if text and text.strip():
-                return text.strip()[:50]
 
             return "Unknown Notebook"
 
@@ -369,9 +376,11 @@ class KaggleNotebookDownloader:
         """Download notebook using Kaggle API"""
         try:
             # Extract username/kernel_name from URL
-            url_parts = notebook.url.split('/')
-            if len(url_parts) < 5 or '/code/' not in notebook.url:
-                logger.error(f"Invalid notebook URL format: {notebook.url}")
+            # Clean URL by removing /comments suffix if present
+            clean_url = notebook.url.replace('/comments', '')
+            url_parts = clean_url.split('/')
+            if len(url_parts) < 5 or '/code/' not in clean_url:
+                logger.error(f"Invalid notebook URL format: {clean_url}")
                 return False
 
             username = url_parts[-2]
