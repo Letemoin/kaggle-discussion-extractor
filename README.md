@@ -2,18 +2,29 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PyPI version](https://img.shields.io/pypi/v/kaggle-discussion-extractor.svg)](https://pypi.org/project/kaggle-discussion-extractor/)
 
-A Python tool for extracting Kaggle competition discussions and writeups with proper hierarchical structure and complete content preservation.
+A professional Python tool for extracting Kaggle competition content with proper hierarchical structure and complete content preservation.
 
 > ℹ️ **Note**: Starting September 17, 2025, Claude is contributing to fix and enhance this repository, focusing on improved leaderboard extraction, hierarchical comment structure, and complete content preservation.
 
-## 🎯 Features
+## 🎯 Main Features
 
-- **Complete Discussion Extraction**: Full content from competition discussions and writeups
+The package provides **2 core extraction capabilities**:
+
+### 1. 💬 Discussion Extraction
+Extract complete competition discussions with hierarchical reply structure, author metadata, rankings, and full content preservation.
+
+### 2. 🏆 Writeup Extraction
+Extract top-performing writeups directly from competition leaderboards with team information, rankings, and complete solution details in multiple formats (Markdown, HTML, JSON).
+
+### Key Capabilities
+- **Complete Content Preservation**: No trimming or content loss
 - **Hierarchical Comments**: Proper reply nesting (1, 1.1, 1.1.1, etc.)
-- **Leaderboard Integration**: Extract writeups directly from competition leaderboards
-- **Rich Metadata**: Author info, rankings, timestamps, upvotes
-- **Multiple Formats**: Markdown, HTML, and JSON output
+- **Leaderboard Integration**: Direct extraction from competition leaderboards
+- **Team Detection**: Multi-member team writeup handling
+- **Rich Metadata**: Author info, rankings, timestamps, upvotes, badges
+- **Multiple Output Formats**: Markdown (readable), HTML (complete), JSON (structured)
 
 ## 📦 Installation
 
@@ -43,27 +54,31 @@ kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --d
 import asyncio
 from kaggle_discussion_extractor import KaggleDiscussionExtractor
 
-async def extract_discussions():
+async def main():
     extractor = KaggleDiscussionExtractor()
 
-    # Extract all discussions
+    # 1. Extract Competition Discussions
+    print("Extracting discussions...")
     success = await extractor.extract_competition_discussions(
-        competition_url="https://www.kaggle.com/competitions/neurips-2025"
+        competition_url="https://www.kaggle.com/competitions/neurips-2025",
+        limit=10  # Optional: limit number of discussions
     )
 
     if success:
-        print("Discussions extracted successfully!")
+        print("✅ Discussions extracted to kaggle_discussions_extracted/")
 
-    # Extract writeups from leaderboard
+    # 2. Extract Competition Writeups from Leaderboard
+    print("Extracting writeups...")
     success = await extractor.extract_competition_writeups(
         competition_url="https://www.kaggle.com/competitions/neurips-2025",
-        limit=5
+        limit=5  # Extract top 5 writeups
     )
 
     if success:
-        print("Writeups extracted successfully!")
+        print("✅ Writeups extracted to kaggle_writeups_extracted/")
 
-asyncio.run(extract_discussions())
+# Run the extraction
+asyncio.run(main())
 ```
 
 ## 📋 Commands
@@ -193,15 +208,29 @@ kaggle_discussion_extractor/
 └── cli.py              # Command-line interface
 ```
 
-## 🎯 Key Features
+## 📋 Package Publishing
 
-- **Leaderboard-Based Extraction**: Automatically finds top writeups from competition leaderboards with team information
-- **Complete Content Preservation**: No trimming or content loss - full solution details captured
-- **Team Detection**: Properly handles multi-member team writeups with individual member information
-- **Hierarchical Comments**: Perfect reply nesting with correct numbering (1, 1.1, 1.1.1, etc.)
-- **Multiple Output Formats**: MD for reading, HTML for viewing, JSON for processing
-- **Rich Metadata**: Author rankings, badges, timestamps, upvotes, team composition, scores
-- **Advanced Parsing**: Handles complex leaderboard structures and discussion pagination
+This package is available on PyPI and can be built/published using the included scripts:
+
+```bash
+# Build package locally
+python pypi.py
+
+# Manual upload to PyPI (requires credentials)
+twine upload dist/*
+```
+
+See [PYPI_PUBLISHING_GUIDE.md](PYPI_PUBLISHING_GUIDE.md) for detailed publishing instructions.
+
+## 🎯 Technical Features
+
+- **🏆 Leaderboard-Based Extraction**: Automatically finds top writeups from competition leaderboards with team information
+- **📝 Complete Content Preservation**: No trimming or content loss - full solution details captured
+- **👥 Team Detection**: Properly handles multi-member team writeups with individual member information
+- **🔄 Hierarchical Comments**: Perfect reply nesting with correct numbering (1, 1.1, 1.1.1, etc.)
+- **📄 Multiple Output Formats**: MD for reading, HTML for viewing, JSON for processing
+- **📊 Rich Metadata**: Author rankings, badges, timestamps, upvotes, team composition, scores
+- **⚙️ Advanced Parsing**: Handles complex leaderboard structures and discussion pagination
 
 ## 📄 License
 
