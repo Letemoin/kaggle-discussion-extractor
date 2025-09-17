@@ -2,120 +2,88 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Playwright](https://img.shields.io/badge/Playwright-45ba4b?style=flat&logo=playwright&logoColor=white)](https://playwright.dev/python/)
 
-A professional-grade Python tool for extracting and analyzing discussions from Kaggle competitions. Features hierarchical reply extraction with proper parent-child relationships, pagination support, and clean markdown output.
+A Python tool for extracting Kaggle competition discussions and writeups with proper hierarchical structure and complete content preservation.
 
-## 🚀 Key Features
+## 🎯 Features
 
-### Hierarchical Discussion Extraction
-- **Complete Thread Preservation**: Maintains the full discussion structure with parent-child relationships
-- **Smart Reply Numbering**: Automatic hierarchical numbering (1, 1.1, 1.2, 2, 2.1, etc.)
-- **No Content Duplication**: Intelligently separates parent and nested reply content
-- **Deep Nesting Support**: Handles multiple levels of nested replies
-
-### Rich Metadata Extraction
-- **Author Information**: Names, usernames, profile URLs
-- **Competition Rankings**: Extracts "Nth in this Competition" rankings
-- **User Badges**: Competition Host, Expert, Master, Grandmaster badges
-- **Engagement Metrics**: Upvotes/downvotes for all posts and replies
-- **Timestamps**: Full timestamp extraction for temporal analysis
-
-### Advanced Capabilities
-- **Pagination Support**: Automatically handles multi-page discussion lists
-- **Batch Processing**: Extract all discussions from a competition at once
-- **Rate Limiting**: Built-in delays to respect server resources
-- **Error Recovery**: Robust error handling with detailed logging
-- **Multiple Output Formats**: Clean Markdown export with proper formatting
+- **Complete Discussion Extraction**: Full content from competition discussions and writeups
+- **Hierarchical Comments**: Proper reply nesting (1, 1.1, 1.1.1, etc.)
+- **Leaderboard Integration**: Extract writeups directly from competition leaderboards
+- **Rich Metadata**: Author info, rankings, timestamps, upvotes
+- **Multiple Formats**: Markdown, HTML, and JSON output
 
 ## 📦 Installation
-
-### Method 1: Install from PyPI (Recommended)
 
 ```bash
 pip install kaggle-discussion-extractor
 playwright install chromium
 ```
 
-### Method 2: Install from Source
+## 🚀 Quick Start
+
+### Command Line
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/kaggle-discussion-extractor.git
-cd kaggle-discussion-extractor
-
-# Install in development mode
-pip install -e .
-playwright install chromium
-```
-
-## 🎯 Quick Start
-
-### Command Line Usage
-
-```bash
-# Extract all discussions from a competition
+# Extract discussions from a competition
 kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025
 
-# Extract only 10 discussions
-kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --limit 10
+# Extract top 5 discussions only
+kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --limit 5
 
-# Enable development mode for detailed logging
+# Enable detailed logging
 kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --dev-mode
-
-# Run with visible browser (useful for debugging)
-kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --no-headless
 ```
 
-### Python API Usage
+### Python API
 
 ```python
 import asyncio
 from kaggle_discussion_extractor import KaggleDiscussionExtractor
 
 async def extract_discussions():
-    # Initialize extractor
-    extractor = KaggleDiscussionExtractor(dev_mode=True)
-    
-    # Extract discussions
-    success = await extractor.extract_competition_discussions(
-        competition_url="https://www.kaggle.com/competitions/neurips-2025",
-        limit=5  # Optional: limit number of discussions
-    )
-    
-    if success:
-        print("Extraction completed successfully!")
-    else:
-        print("Extraction failed!")
+    extractor = KaggleDiscussionExtractor()
 
-# Run the extraction
+    # Extract all discussions
+    await extractor.extract_competition_discussions(
+        "https://www.kaggle.com/competitions/neurips-2025"
+    )
+
+    # Extract writeups from leaderboard
+    await extractor.extract_competition_writeups(
+        "https://www.kaggle.com/competitions/neurips-2025",
+        limit=5
+    )
+
 asyncio.run(extract_discussions())
 ```
 
-## 📋 CLI Options
+## 📋 Commands
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `competition_url` | URL of the Kaggle competition (required) | - |
-| `--limit, -l` | Number of discussions to extract | All |
-| `--dev-mode, -d` | Enable detailed logging | False |
-| `--no-headless` | Run browser in visible mode | False (headless) |
-| `--version, -v` | Show version information | - |
+| Command | Description |
+|---------|-------------|
+| `kaggle-discussion-extractor <url>` | Extract all discussions |
+| `--limit N` | Extract only N discussions |
+| `--dev-mode` | Enable detailed logging |
+| `--no-headless` | Show browser window |
 
-## 📁 Output Structure
+## 📁 Output
 
-The extractor creates a `kaggle_discussions_extracted` directory with:
-
+### File Structure
 ```
 kaggle_discussions_extracted/
 ├── 01_Discussion_Title.md
 ├── 02_Another_Discussion.md
-├── 03_Third_Discussion.md
+└── 03_Third_Discussion.md
+
+kaggle_writeups_extracted/
+├── Rank_01_Team_Name.md        # Markdown (readable)
+├── Rank_01_Team_Name.html      # Complete HTML
+├── Rank_01_Team_Name.json      # Structured data
 └── ...
 ```
 
-### Sample Output Format
-
+### Output Format
 ```markdown
 # Discussion Title
 
@@ -129,180 +97,99 @@ kaggle_discussions_extracted/
 
 **Author**: username (@username)
 **Rank**: 27th in this Competition
-**Badges**: Competition Host
 **Upvotes**: 36
 
-Main discussion content goes here...
+Main discussion content...
 
 ---
 
 ## Replies
 
 ### Reply 1
-
 - **Author**: user1 (@user1)
 - **Rank**: 154th in this Competition
 - **Upvotes**: 11
-- **Timestamp**: Tue Jun 17 2025 11:54:57 GMT+0300
 
-Content of reply 1...
+Reply content...
 
   #### Reply 1.1
-
   - **Author**: user2 (@user2)
   - **Upvotes**: 6
-  - **Timestamp**: Sun Jun 29 2025 04:20:43 GMT+0300
 
   Nested reply content...
 
-  #### Reply 1.2
-
-  - **Author**: user3 (@user3)
-  - **Upvotes**: 2
-  - **Timestamp**: Wed Jul 16 2025 12:50:34 GMT+0300
-
-  Another nested reply...
-
----
-
 ### Reply 2
+- **Author**: user3 (@user3)
+- **Upvotes**: 2
 
-- **Author**: user4 (@user4)
-- **Upvotes**: -3
-
-Content of reply 2...
-
----
+Another reply...
 ```
 
 ## ⚙️ Configuration
 
-### Development Mode
-
-Enable development mode to see detailed logs and debugging information:
-
+### Basic Usage
 ```python
+# Default settings
+extractor = KaggleDiscussionExtractor()
+
+# Development mode (detailed logs)
 extractor = KaggleDiscussionExtractor(dev_mode=True)
-```
 
-**What dev_mode does:**
-- Enables DEBUG level logging
-- Shows detailed progress information
-- Displays browser automation steps
-- Provides error stack traces
-- Logs DOM element detection details
-
-### Browser Mode
-
-Run with visible browser for debugging:
-
-```python
+# Visible browser (for debugging)
 extractor = KaggleDiscussionExtractor(headless=False)
 ```
 
-## 🧪 Examples
-
-### Basic Example
-
+### Extract Specific Content
 ```python
-from kaggle_discussion_extractor import KaggleDiscussionExtractor
-import asyncio
+# Extract discussions only
+await extractor.extract_competition_discussions(url, limit=10)
 
-async def main():
-    extractor = KaggleDiscussionExtractor()
-    
-    await extractor.extract_competition_discussions(
-        "https://www.kaggle.com/competitions/neurips-2025"
-    )
+# Extract writeups only
+await extractor.extract_competition_writeups(url, limit=5)
 
-asyncio.run(main())
-```
-
-### Advanced Example with Logging
-
-```python
-import asyncio
-import logging
-from kaggle_discussion_extractor import KaggleDiscussionExtractor
-
-# Setup custom logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-async def extract_with_monitoring():
-    extractor = KaggleDiscussionExtractor(
-        dev_mode=True,  # Enable detailed logging
-        headless=True   # Run in background
-    )
-    
-    logger.info("Starting extraction...")
-    
-    success = await extractor.extract_competition_discussions(
-        competition_url="https://www.kaggle.com/competitions/neurips-2025",
-        limit=20  # Extract first 20 discussions
-    )
-    
-    if success:
-        logger.info("✅ Extraction completed successfully!")
-        logger.info("Check 'kaggle_discussions_extracted' directory for results")
-    else:
-        logger.error("❌ Extraction failed!")
-
-if __name__ == "__main__":
-    asyncio.run(extract_with_monitoring())
+# Extract single discussion
+discussion = await extractor.extract_single_discussion(page, discussion_url)
 ```
 
 ## 🔧 Development
 
-### Setup Development Environment
-
+### Setup
 ```bash
-# Clone repository
 git clone https://github.com/yourusername/kaggle-discussion-extractor.git
 cd kaggle-discussion-extractor
-
-# Install development dependencies
-pip install -e ".[dev]"
+pip install -e .
 playwright install chromium
+```
 
-# Run tests
+### Run Tests
+```bash
 pytest tests/
 ```
 
 ### Project Structure
-
 ```
 kaggle_discussion_extractor/
-├── __init__.py          # Package initialization
+├── __init__.py          # Package exports
 ├── core.py             # Main extraction logic
 └── cli.py              # Command-line interface
 ```
 
-## 🤝 Contributing
+## 🎯 Key Features
 
-Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit pull requests, report issues, and contribute to the project.
+- **Leaderboard-Based Extraction**: Automatically finds top writeups from competition leaderboards
+- **Complete Content Preservation**: No trimming or content loss
+- **Team Detection**: Properly handles multi-member team writeups
+- **Hierarchical Comments**: Perfect reply nesting with correct numbering
+- **Multiple Output Formats**: MD for reading, HTML for viewing, JSON for processing
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) for details.
 
-## 🙏 Acknowledgments
+## 🤝 Contributing
 
-- Built with [Playwright](https://playwright.dev/) for reliable browser automation
-- Inspired by the need for better Kaggle competition analysis tools
-- Thanks to the open-source community for continuous support
-
-## 📊 Features Comparison
-
-| Feature | This Tool | Other Tools |
-|---------|-----------|-------------|
-| Hierarchical Replies | ✅ Perfect (1, 1.1, 1.2) | ❌ Flat structure |
-| No Content Duplication | ✅ Smart separation | ❌ Duplicated content |
-| Pagination Support | ✅ All pages | ❌ Single page only |
-| Author Rankings | ✅ Full metadata | ❌ Basic info only |
-| Rate Limiting | ✅ Respectful delays | ❌ Aggressive scraping |
-| Error Recovery | ✅ Robust handling | ❌ Fails on errors |
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
 ---
 
-**Made with ❤️ for the Kaggle community**
+**Made for the Kaggle community** 🏆

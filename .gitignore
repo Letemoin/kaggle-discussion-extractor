@@ -130,6 +130,9 @@ data/
 exports/
 *_EXTRACTION/
 kaggle_discussions_extracted/
+kaggle_writeups_extracted/
+kaggle_writeups_extracted_fixed/
+archive/
 *.html
 *.db
 *.db-shm

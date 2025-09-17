@@ -68,19 +68,19 @@ async def main():
     """Main CLI function"""
     parser = create_parser()
     args = parser.parse_args()
-    
+
     # Validate competition URL
     if not args.competition_url.startswith('https://www.kaggle.com/competitions/'):
         print("Error: Please provide a valid Kaggle competition URL")
         print("Example: https://www.kaggle.com/competitions/neurips-2025")
         sys.exit(1)
-    
+
     # Initialize extractor
     extractor = KaggleDiscussionExtractor(
         dev_mode=args.dev_mode,
         headless=not args.no_headless
     )
-    
+
     print("=" * 60)
     print("Kaggle Discussion Extractor")
     print("=" * 60)
@@ -91,62 +91,66 @@ async def main():
     print("  - Pagination support for all discussions")
     print("  - Rich metadata extraction (rankings, badges, upvotes)")
     print("  - Clean markdown output")
-    
+
     if args.dev_mode:
         print("  - Development mode: ENABLED")
     if args.no_headless:
         print("  - Browser mode: VISIBLE")
-        
+
     print()
-    
+
     try:
         # Start extraction
         success = await extractor.extract_competition_discussions(
             competition_url=args.competition_url,
             limit=args.limit
         )
-        
+
         if success:
             print("\n" + "=" * 60)
             print("EXTRACTION COMPLETED SUCCESSFULLY!")
             print("Check the 'kaggle_discussions_extracted' directory for results")
             print("=" * 60)
+            return True
         else:
             print("\n" + "=" * 60)
             print("EXTRACTION FAILED!")
             print("Check the error messages above for details")
             print("=" * 60)
-            sys.exit(1)
-            
+            return False
+
     except KeyboardInterrupt:
         print("\nExtraction cancelled by user")
-        sys.exit(0)
+        return False
     except Exception as e:
         print(f"\nUnexpected error: {e}")
         if args.dev_mode:
             import traceback
             traceback.print_exc()
-        sys.exit(1)
+        return False
 
 
 def cli_main():
     """Entry point for console script"""
     # Handle version first (non-async)
     parser = create_parser()
-    
+
     # Pre-check for version to avoid async issues
     if len(sys.argv) > 1 and sys.argv[1] in ['--version', '-v']:
         print('kaggle-discussion-extractor 1.0.1')
         return
-    
+
     try:
-        asyncio.run(main())
+        # Use asyncio.run() with proper exception handling
+        result = asyncio.run(main())
+        if result is not None:
+            print(result)
     except KeyboardInterrupt:
         print("\nExtraction cancelled by user")
-        exit(0)
+        sys.exit(0)
     except Exception as e:
         print(f"Error: {e}")
-        exit(1)
+        sys.exit(1)
 
 
 if __name__ == '__main__':
