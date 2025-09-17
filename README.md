@@ -41,14 +41,20 @@ playwright install chromium
 ### Command Line
 
 ```bash
-# Extract discussions from a competition
+# Feature 1: Extract discussions from a competition
 kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025
 
-# Extract top 5 discussions only
+# Feature 1: Extract top 5 discussions only
 kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --limit 5
 
-# Extract and convert notebooks to Python files
+# Feature 2: Extract writeups from leaderboard
+kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --writeups --limit 5
+
+# Feature 3: Extract and convert notebooks to Python files
 kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --notebooks --limit 10
+
+# Extract all 3 features with limits
+kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --writeups --notebooks --limit 5
 
 # Enable detailed logging
 kaggle-discussion-extractor https://www.kaggle.com/competitions/neurips-2025 --dev-mode
@@ -102,9 +108,10 @@ asyncio.run(main())
 
 | Command | Description |
 |---------|-------------|
-| `kaggle-discussion-extractor <url>` | Extract all discussions |
-| `--limit N` | Extract only N discussions/notebooks |
-| `--notebooks` | Extract and convert notebooks to Python |
+| `kaggle-discussion-extractor <url>` | Extract all discussions (Feature 1) |
+| `--writeups` | Extract writeups from leaderboard (Feature 2) |
+| `--notebooks` | Extract and convert notebooks to Python (Feature 3) |
+| `--limit N` | Extract only N discussions/writeups/notebooks |
 | `--dev-mode` | Enable detailed logging |
 | `--no-headless` | Show browser window |
 
