@@ -17,7 +17,7 @@ requirements = [
 
 setup(
     name="kaggle-discussion-extractor",
-    version="1.0.11",
+    version="1.0.13",
     author="Kaggle Discussion Extractor Contributors",
     author_email="contact@kaggle-extractor.com",
     description="Professional tool for extracting Kaggle competition discussions and writeups with leaderboard integration",

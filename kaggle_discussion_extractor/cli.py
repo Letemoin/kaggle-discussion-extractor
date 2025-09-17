@@ -58,7 +58,7 @@ Examples:
     parser.add_argument(
         '--version', '-v',
         action='version',
-        version='kaggle-discussion-extractor 1.0.11'
+        version='kaggle-discussion-extractor 1.0.12'
     )
     
     return parser
@@ -137,7 +137,7 @@ def cli_main():
 
     # Pre-check for version to avoid async issues
     if len(sys.argv) > 1 and sys.argv[1] in ['--version', '-v']:
-        print('kaggle-discussion-extractor 1.0.11')
+        print('kaggle-discussion-extractor 1.0.12')
         return
 
     try:
